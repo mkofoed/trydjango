@@ -5,6 +5,7 @@ from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView
 
 from .models import RestaurantLocation
+from .forms import RestaurantCreateForm
 
 def restaurant_list_view(request):
     template_name = 'restaurants/restaurants_list.html'
@@ -31,3 +32,15 @@ class RestaurantListView(ListView):
 
 class RestaurantDetailView(DetailView):
     queryset = RestaurantLocation.objects.all()
+
+
+def restaurant_createview(request):
+    if request.method == 'GET':
+        print('---GET DATA---')
+    if request.method == 'POST':
+        print('---POST DATA---')
+        print(request.POST)
+    template_name = 'restaurants/form.html'
+    context = {}
+    return render(request, template_name, context) 
+
