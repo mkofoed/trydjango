@@ -14,7 +14,6 @@ class RestaurantLocation(models.Model):
     slug            = models.SlugField(null=True, blank=True)
     #my_date_field   = models.DateField(auto_now=False, auto_now_add=False)
 
-
     def __str__(self):
         return self.name
 
