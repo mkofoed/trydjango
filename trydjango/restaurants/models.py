@@ -21,7 +21,7 @@ class RestaurantLocation(models.Model):
     #my_date_field   = models.DateField(auto_now=False, auto_now_add=False)
 
     def __str__(self):
-        return self.name
+        return self.name.title()
 
     def get_absolute_url(self):
         return reverse('restaurants:detail', kwargs={'slug': self.slug})
