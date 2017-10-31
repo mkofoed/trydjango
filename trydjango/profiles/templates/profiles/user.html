@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{# Windows title #}
+{% block head_title %}{{ user.username }} | {{ block.super }}{% endblock head_title%}
+
+{# Main block #}
+{% block content %}
+
+{# Display username #}
+<h1>{{ user.username }}</h1>
+
+{# Search form #}
+<form class="form" method="GET" action=".">
+<input type="text" placeholder="Search.." name="q" value="{{ request.GET.q }}">
+<button class="btn btn-default" type='submit'>Search</button>
+</form>
+
+<hr/>
+
+{# List all restaurants and list their items #}
+
+{% if locations %}
+{% for rest in  user.restaurantlocation_set.all %}
+    <div class='row'>
+        <div class='col-sml-12'>
+            <div class='card card-default'>
+                <h4><a href="{{ rest.get_absolute_url }}"> {{ rest.title }}</a></h4>
+                <p>{{ rest.location }} | {{ rest.category }}</p>
+                <ul>
+                    {% for item in rest.item_set.all %}
+                        <li style='margin-bottom: 10px'><a href="{{ item.get_absolute_url }}">{{ item.name }}</a><br/>
+                            {% for ing in item.get_contents %}
+                            <span class='badge badge-primary'>{{ ing }},</span>
+                            {% endfor %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+{% else %}
+<p class='lead'>No Items Found</p>
+{% endif %}
+
+
+{% endblock content %}

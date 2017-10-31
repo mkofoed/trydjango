@@ -1,12 +1,7 @@
 from django import forms
 from .models import RestaurantLocation
 from .validators import validate_category
-
-# Old one
-# class RestaurantCreateForm(forms.Form):
-#     name            = forms.CharField(required=True)
-#     location        = forms.CharField(required=False)
-#     category        = forms.CharField(required=False)
+from .utils import unique_slug_generator
 
 
 class RestaurantLocationCreateForm(forms.ModelForm):
@@ -16,6 +11,7 @@ class RestaurantLocationCreateForm(forms.ModelForm):
             'name',
             'location',
             'category',
+            'slug',
         ]
 
     # Custom validation of the "name" field
@@ -31,3 +27,16 @@ class RestaurantLocationCreateForm(forms.ModelForm):
     #     if 'edu' in email:
     #         raise forms.ValidationError('We do not accept edu emails.')
     #     return email
+
+    def clean_slug(self):
+        # Get this form's slug
+        slug = self.cleaned_data.get('slug')
+        # Get all slugs in the database
+        slugs_in_db = self.instance.__class__.objects.filter(slug=slug)
+        # Check if the form's slug is equal to the instance's slug - i.e. nothing has changed
+        if slug == self.instance.slug:
+            return slug
+        # Check if the slug already exists in the database
+        if slugs_in_db.exists():
+            slug = unique_slug_generator(self.instance)
+        return slug

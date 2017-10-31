@@ -10,6 +10,20 @@ from .validators import validate_category
 
 User = settings.AUTH_USER_MODEL
 
+
+class RestaurantLocationQueryset(models.query.QuerySet):
+    def search(self, query):
+        return self.filter(name__icontains=query)
+
+
+class RestaurantLocationManager(models.Manager):
+    def get_queryset(self):
+        return RestaurantLocationQueryset(self.model, using=self._db)
+
+    def search(self, query):
+        return self.get_queryset().search(query)
+
+
 class RestaurantLocation(models.Model):
     owner           = models.ForeignKey(User) # class_instance.model_set.all()
     name            = models.CharField(max_length=120)
@@ -19,6 +33,8 @@ class RestaurantLocation(models.Model):
     updated         = models.DateTimeField(auto_now=True)
     slug            = models.SlugField(null=True, blank=True)
     #my_date_field   = models.DateField(auto_now=False, auto_now_add=False)
+
+    objects = RestaurantLocationManager() # Adding Model.objects.all()
 
     def __str__(self):
         return self.name.title()
@@ -32,8 +48,8 @@ class RestaurantLocation(models.Model):
 
 
 def rl_pre_save_receiver(sender, instance, *args, **kwargs):
-    print(sender)
-    print(instance)
+    # print(sender)
+    # print(instance)
     instance.name = instance.name.title()
     if instance.category:
         instance.category = instance.category.title()
